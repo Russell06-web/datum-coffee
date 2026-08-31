@@ -356,6 +356,10 @@ button {
   height: 100%;
   object-fit: cover;
   opacity: 0.8;
+  transition: transform 0.6s ease;
+}
+.hero-media:hover img {
+  transform: scale(1.06);
 }
 .hero-stats {
   position: absolute;
@@ -566,6 +570,12 @@ button {
   opacity: 0.9;
   transform: scale(1);
 }
+.origin-card:hover .origin-card-media img {
+  transform: scale(1.1);
+}
+.origin-card:hover .origin-card-media img.is-active {
+  transform: scale(1.03);
+}
 .origin-index {
   position: absolute;
   top: 1rem;
@@ -664,6 +674,10 @@ button {
   height: 100%;
   object-fit: cover;
   opacity: 0.7;
+  transition: transform 0.6s ease;
+}
+.process-media:hover img {
+  transform: scale(1.06);
 }
 .process-content {
   padding: 2rem;
@@ -842,6 +856,10 @@ button {
   height: 100%;
   object-fit: cover;
   opacity: 0.6;
+  transition: transform 0.6s ease;
+}
+.journal-media:hover img {
+  transform: scale(1.06);
 }
 
 @media (min-width: 768px) {
@@ -935,5 +953,11 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .ticker {
     animation: none;
+  }
+  .hero-media img,
+  .process-media img,
+  .journal-media img,
+  .origin-card-media img {
+    transition: none;
   }
 }
