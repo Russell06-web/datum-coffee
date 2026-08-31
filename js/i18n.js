@@ -61,8 +61,7 @@ window.DATUM_I18N = (function () {
       footerNav: "Navigation",
       footerContact: "Contact",
       copyright: "© 2026 Datum Coffee",
-      orderBtn: "Order",
-      processCta: "See The Menu →"
+      orderBtn: "Order"
     },
 
     zh: {
@@ -118,8 +117,7 @@ window.DATUM_I18N = (function () {
       footerNav: "導覽",
       footerContact: "聯絡",
       copyright: "© 2026 Datum Coffee",
-      orderBtn: "點單",
-      processCta: "查看菜單 →"
+      orderBtn: "點單"
     },
 
     ja: {
@@ -175,8 +173,7 @@ window.DATUM_I18N = (function () {
       footerNav: "ナビゲーション",
       footerContact: "お問い合わせ",
       copyright: "© 2026 Datum Coffee",
-      orderBtn: "注文",
-      processCta: "メニューを見る →"
+      orderBtn: "注文"
     },
 
     ko: {
@@ -232,8 +229,7 @@ window.DATUM_I18N = (function () {
       footerNav: "내비게이션",
       footerContact: "문의",
       copyright: "© 2026 Datum Coffee",
-      orderBtn: "주문",
-      processCta: "메뉴 보기 →"
+      orderBtn: "주문"
     }
   };
 
