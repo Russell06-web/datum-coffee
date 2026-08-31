@@ -1,6 +1,6 @@
 /*
  * Vanilla JS port of the Figma Make source's src/App.tsx.
- * State (lang / activeOrigin / mobileMenuOpen / langMenuOpen) drives a single render()
+ * State (lang / mobileMenuOpen / langMenuOpen) drives a single render()
  * that rebuilds #app's innerHTML, mirroring the original React component's re-render model.
  * Interaction is wired once via event delegation on #app so re-renders don't need re-binding.
  */
@@ -22,10 +22,11 @@
 
   var state = {
     lang: "en",
-    activeOrigin: 0,
     mobileMenuOpen: false,
     langMenuOpen: false
   };
+
+  var revealObserver = null;
 
   var app = document.getElementById("app");
 
@@ -122,49 +123,52 @@
       })
       .join("");
 
-    var originCards = tx.origins
+    var originStories = tx.origins
       .map(function (o, i) {
-        var active = state.activeOrigin === i;
+        var reversed = i % 2 === 1 ? " is-reversed" : "";
         return (
-          '<button type="button" class="origin-card' +
-          (active ? " is-active" : "") +
-          '" data-action="set-origin" data-index="' +
-          i +
-          '">' +
-          '<div class="origin-card-media"><img src="' +
+          '<div class="story-panel origin-story' +
+          reversed +
+          '" data-reveal>' +
+          '<div class="story-media"><img src="' +
           ORIGIN_IMGS[i] +
           '" alt="' +
           o.region +
-          ' coffee beans" loading="lazy" class="' +
-          (active ? "is-active" : "") +
-          '" /><div class="origin-index">' +
+          ' coffee beans" loading="lazy" /><div class="story-index">' +
           pad2(i) +
           "</div></div>" +
-          '<div class="origin-body"><h3 class="origin-region ' +
+          '<div class="story-content">' +
+          '<p class="story-eyebrow ' +
+          monoFont(fc) +
+          '">' +
+          o.sub +
+          '</p><h3 class="story-title ' +
           monoFont(fc) +
           '">' +
           o.region +
-          '</h3><p class="origin-sub">' +
-          o.sub +
-          '</p><p class="origin-notes ' +
+          '</h3><p class="story-notes ' +
           bodyFont(fc) +
           '">' +
           o.notes +
-          '</p><div class="origin-meta">' +
-          '<div class="origin-meta-item"><div class="origin-meta-label">' +
+          '</p><div class="story-meta">' +
+          '<div class="story-meta-item"><div class="story-meta-label">' +
           tx.originsElevation +
-          '</div><div class="origin-meta-value">' +
+          '</div><div class="story-meta-value">' +
           ELEVATION[i] +
           "</div></div>" +
-          '<div class="origin-meta-item"><div class="origin-meta-label">' +
+          '<div class="story-meta-item"><div class="story-meta-label">' +
           tx.originsProcess +
-          '</div><div class="origin-meta-value ' +
+          '</div><div class="story-meta-value ' +
           monoFont(fc) +
           '">' +
           o.process +
           "</div></div>" +
-          "</div></div>" +
-          "</button>"
+          "</div>" +
+          '<a class="btn-pill" href="#section-1">' +
+          tx.heroCtaSub +
+          "</a>" +
+          "</div>" +
+          "</div>"
         );
       })
       .join("");
@@ -292,7 +296,7 @@
       ticker +
       "</div></div>" +
       "</section>" +
-      '<section class="manifesto">' +
+      '<section class="manifesto" data-reveal>' +
       '<div class="manifesto-left">' +
       '<p class="eyebrow">' +
       tx.secManifesto +
@@ -306,7 +310,7 @@
       "</div>" +
       "</section>" +
       '<section id="section-0" class="origins-section">' +
-      '<div class="origins-header">' +
+      '<div class="origins-header" data-reveal>' +
       '<div><p class="eyebrow">' +
       tx.secOrigins +
       '</p><h2 class="section-title">' +
@@ -318,27 +322,30 @@
       tx.originsDesc +
       "</p>" +
       "</div>" +
-      '<div class="origins-grid">' +
-      originCards +
-      "</div>" +
+      originStories +
       "</section>" +
       '<section id="section-1" class="process-section">' +
-      '<div class="process-grid">' +
-      '<div class="process-media"><img src="assets/images/process.jpg" alt="Coffee roasting machine" /></div>' +
-      '<div class="process-content">' +
+      '<div class="story-panel process-story is-reversed" data-reveal>' +
+      '<div class="story-media"><img src="assets/images/process.jpg" alt="Coffee roasting machine" loading="lazy" /></div>' +
+      '<div class="story-content">' +
       '<p class="eyebrow">' +
       tx.secProcess +
-      '</p><h2 class="section-title">' +
+      '</p><h2 class="story-title ' +
+      monoFont(fc) +
+      '">' +
       processTitleLines +
       "</h2>" +
       '<div class="process-steps">' +
       processSteps +
       "</div>" +
+      '<a class="btn-pill" href="#section-2">' +
+      tx.processCta +
+      "</a>" +
       "</div>" +
       "</div>" +
       "</section>" +
       '<section id="section-2" class="menu-section">' +
-      '<div class="menu-header">' +
+      '<div class="menu-header" data-reveal>' +
       '<p class="eyebrow">' +
       tx.secMenu +
       '</p><h2 class="section-title">' +
@@ -350,23 +357,25 @@
       "</div>" +
       "</section>" +
       '<section id="section-3" class="journal-section">' +
-      '<div class="journal-grid">' +
-      '<div class="journal-content">' +
+      '<div class="story-panel journal-story" data-reveal>' +
+      '<div class="story-media"><img src="assets/images/journal.jpg" alt="Barista pouring coffee" loading="lazy" /></div>' +
+      '<div class="story-content">' +
       '<p class="eyebrow">' +
       tx.secJournal +
-      '</p><h2 class="journal-title">' +
+      '</p><h2 class="story-title ' +
+      monoFont(fc) +
+      '">' +
       journalTitleLines +
       "</h2>" +
-      '<p class="journal-desc ' +
+      '<p class="story-notes ' +
       bodyFont(fc) +
       '">' +
       tx.journalDesc +
       "</p>" +
-      '<a class="btn-link" href="#section-3">' +
+      '<a class="btn-pill" href="#section-3">' +
       tx.journalCta +
       "</a>" +
       "</div>" +
-      '<div class="journal-media"><img src="assets/images/journal.jpg" alt="Barista pouring coffee" /></div>' +
       "</div>" +
       "</section>" +
       '<footer class="footer">' +
@@ -401,6 +410,33 @@
       tx.copyright +
       "</span><span>All Rights Reserved</span>" +
       "</div>";
+
+    initScrollReveal();
+  }
+
+  function initScrollReveal() {
+    if (revealObserver) revealObserver.disconnect();
+    var targets = app.querySelectorAll("[data-reveal]");
+    if (!("IntersectionObserver" in window) || !targets.length) {
+      targets.forEach(function (el) {
+        el.classList.add("is-visible");
+      });
+      return;
+    }
+    revealObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -60px 0px" }
+    );
+    targets.forEach(function (el) {
+      revealObserver.observe(el);
+    });
   }
 
   app.addEventListener("click", function (e) {
@@ -420,9 +456,6 @@
       render();
     } else if (action === "toggle-lang-menu") {
       state.langMenuOpen = !state.langMenuOpen;
-      render();
-    } else if (action === "set-origin") {
-      state.activeOrigin = parseInt(actionEl.getAttribute("data-index"), 10);
       render();
     }
   });
