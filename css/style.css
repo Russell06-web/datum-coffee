@@ -125,6 +125,9 @@ button {
   border-right: 1px solid var(--color-rule);
   color: rgba(240, 235, 224, 0.4);
   transition: all 0.2s ease;
+  min-width: 62px;
+  text-align: center;
+  white-space: nowrap;
 }
 .lang-btn:last-child {
   border-right: 0;
@@ -149,7 +152,10 @@ button {
   color: rgba(240, 235, 224, 0.5);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.25rem;
+  min-width: 78px;
+  white-space: nowrap;
 }
 .lang-dropdown-btn:hover {
   color: var(--color-fg);
@@ -200,6 +206,9 @@ button {
   padding: 0.5rem 1rem;
   border: 1px solid rgba(240, 235, 224, 0.3);
   transition: all 0.2s ease;
+  min-width: 92px;
+  text-align: center;
+  white-space: nowrap;
 }
 .order-btn:hover {
   background: var(--color-fg);
